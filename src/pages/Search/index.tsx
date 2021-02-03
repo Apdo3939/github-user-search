@@ -8,14 +8,25 @@ import './styles.scss';
 const Search = () => {
     const [gitResponse, setGitResponse] = useState<GitHub>();
     const [isLoading, setIsLoading] = useState(false);
+    const [search, setSearch] = useState('');
+    const [urlSearch, setUrlSearch] = useState('');
+
+    const onChangeSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearch(event.target.value);
+    }
+
+    const onClickSearch = () => {
+        setUrlSearch(`https://api.github.com/users/${search}`);
+    }
+
 
     useEffect(() => {
         setIsLoading(true);
-        api.get("/devsuperior")
+        api.get(`${urlSearch}`)
             .then((response) => setGitResponse(response.data))
             .catch((err) => { console.error("ops! ocorreu um erro" + err); })
             .finally(() => setIsLoading(false));
-    }, []);
+    }, [urlSearch]);
 
     return (
         <>
@@ -23,11 +34,22 @@ const Search = () => {
                 <div className="search-content">
                     <h1 className="search-title">Encontre um perfil Github</h1>
                     <form >
-                        <input type="search" name="Usuário Github" id="searchId" className="search-input" />
-                        <button type="submit" className="search-button">
+                        <input
+                            value={search}
+                            name="search"
+                            onChange={onChangeSearch}
+                            className="search-input"
+                        />
+
+                        <button
+                            value={urlSearch}
+                            type="button"
+                            className="search-button"
+                            onClick={onClickSearch}>
                             <h4 className="search-button-text">Encontrar</h4>
                         </button>
                     </form>
+
                 </div>
             </div>
             <div className="result-container">
@@ -43,7 +65,7 @@ const Search = () => {
                                 <div className="result-text-response-first">
                                     <h2 className="result-text-response-h3">Repositórios Publicos:{gitResponse?.public_repos}</h2>
                                     <h2 className="result-text-response-h3 resul-text-margin">Seguidores:{gitResponse?.followers}</h2>
-                                    <h2 className="result-text-response-h3 resul-text-margin">Seguindo:{gitResponse?.following}</h2>  
+                                    <h2 className="result-text-response-h3 resul-text-margin">Seguindo:{gitResponse?.following}</h2>
                                 </div>
                                 <div className="result-text-response">
                                     <h1 className="result-text-title"> Informações</h1>
